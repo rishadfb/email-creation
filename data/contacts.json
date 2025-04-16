@@ -1,0 +1,26 @@
+[
+  {
+    "email": "jennifer.lee@target.com",
+    "first_name": "Jennifer",
+    "job_title": "Marketing Director",
+    "company": "Target",
+    "industry": "Retail",
+    "location": "Minneapolis, MN"
+  },
+  {
+    "email": "michael.chen@salesforce.com",
+    "first_name": "Michael",
+    "job_title": "",
+    "company": "Salesforce",
+    "industry": "Technology",
+    "location": "San Francisco, CA"
+  },
+  {
+    "email": "sarah.patel@acme.co",
+    "first_name": "Sarah",
+    "job_title": "Head of Growth",
+    "company": "Acme Co",
+    "industry": "",
+    "location": "New York, NY"
+  }
+]

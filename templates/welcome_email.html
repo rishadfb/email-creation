@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><!-- SUBJECT --></title>
+    <style>
+      /* Base styles */
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Container */
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: white;
+      }
+
+      /* Header section */
+      .header {
+        background-color: #2d3748;
+        color: white;
+        padding: 40px 20px;
+        text-align: center;
+      }
+
+      .header img {
+        max-width: 200px;
+        margin-bottom: 20px;
+      }
+
+      /* Content sections */
+      .section {
+        padding: 30px 20px;
+        border-bottom: 1px solid #edf2f7;
+      }
+
+      /* Two-column layout */
+      .two-col {
+        display: inline-block;
+        width: 100%;
+      }
+
+      .col {
+        width: 48%;
+        float: left;
+        margin: 1%;
+      }
+
+      /* Feature box */
+      .feature-box {
+        background-color: #f7fafc;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 10px 0;
+      }
+
+      /* Images */
+      .img-fluid {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 10px 0;
+      }
+
+      /* CTA Button */
+      .cta-button {
+        display: inline-block;
+        padding: 15px 30px;
+        background-color: #4299e1;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        margin: 20px 0;
+        transition: background-color 0.3s;
+      }
+
+      .cta-button:hover {
+        background-color: #3182ce;
+      }
+
+      /* Footer */
+      .footer {
+        background-color: #2d3748;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 12px;
+      }
+
+      .footer a {
+        color: #63b3ed;
+        text-decoration: none;
+      }
+
+      /* Mobile responsiveness */
+      @media only screen and (max-width: 480px) {
+        .col {
+          width: 100%;
+          float: none;
+          margin: 10px 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header Section -->
+      <div class="header">
+        <!-- COMPANY_LOGO -->
+        <h1><!-- HEADLINE --></h1>
+        <p><!-- SUBHEADLINE --></p>
+      </div>
+
+      <!-- Hero Section -->
+      <div class="section" style="text-align: center">
+        <img
+          src="<!-- HERO_IMAGE -->"
+          alt="Welcome"
+          class="img-fluid"
+          style="width: 100%; max-width: 500px"
+        />
+        <h2>
+          Welcome to
+          <!-- COMPANY_NAME -->
+        </h2>
+        <!-- WELCOME_MESSAGE -->
+      </div>
+
+      <!-- Two Column Features -->
+      <div class="section">
+        <div class="two-col">
+          <div class="col">
+            <img
+              src="<!-- FEATURE1_IMAGE -->"
+              alt="Feature 1"
+              class="img-fluid"
+            />
+            <h3><!-- FEATURE1_TITLE --></h3>
+            <!-- FEATURE1_TEXT -->
+          </div>
+          <div class="col">
+            <img
+              src="<!-- FEATURE2_IMAGE -->"
+              alt="Feature 2"
+              class="img-fluid"
+            />
+            <h3><!-- FEATURE2_TITLE --></h3>
+            <!-- FEATURE2_TEXT -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Single Column Highlight -->
+      <div class="section" style="text-align: center">
+        <div class="feature-box">
+          <img
+            src="<!-- HIGHLIGHT_IMAGE -->"
+            alt="Special Highlight"
+            class="img-fluid"
+            style="max-width: 300px; margin: 0 auto"
+          />
+          <h3><!-- HIGHLIGHT_TITLE --></h3>
+          <!-- HIGHLIGHT_TEXT -->
+        </div>
+      </div>
+
+      <!-- CTA Section -->
+      <div class="section" style="text-align: center">
+        <h2><!-- CTA_HEADLINE --></h2>
+        <!-- CTA_TEXT -->
+        <a href="<!-- CTA_LINK -->" class="cta-button"> Get Started Now </a>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>
+          © 2024
+          <!-- COMPANY_NAME -->. All rights reserved.
+        </p>
+        <p>
+          Our address:
+          <!-- COMPANY_ADDRESS -->
+        </p>
+        <p>
+          <a href="<!-- PRIVACY_LINK -->">Privacy Policy</a> |
+          <a href="<!-- TERMS_LINK -->">Terms of Service</a> |
+          <a href="<!-- UNSUBSCRIBE_LINK -->">Unsubscribe</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
