@@ -5,6 +5,13 @@ from dotenv import load_dotenv
 from utils.gemini import GeminiClient
 from utils.html_utils import HTMLProcessor
 
+# Page config - MUST be the first Streamlit command
+st.set_page_config(
+    page_title="AI Email Assistant",
+    page_icon="🧠",
+    layout="wide"
+)
+
 # Load environment variables
 load_dotenv()
 
@@ -122,13 +129,6 @@ def process_prompt(prompt: str):
                     st.markdown(response)
                     st.session_state.messages.append({"role": "assistant", "content": response})
 
-# Page config
-st.set_page_config(
-    page_title="AI Email Assistant",
-    page_icon="🧠",
-    layout="wide"
-)
-
 # Sidebar for contacts upload
 with st.sidebar:
     st.header("Add a contacts.json file")
@@ -157,7 +157,18 @@ with st.sidebar:
 # Main chat interface
 st.title("🧠 AI Email Assistant")
 
-# Display chat messages
+# Welcome message on first load
+if not st.session_state.messages:
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": """
+        👋 Hi! I'm your AI Email Assistant. I'll help you create personalized email campaigns for your contacts.
+        
+        To get started, upload your contacts.json file in the sidebar, then tell me what kind of campaign you'd like to create!
+        """
+    })
+
+# Display all chat messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
@@ -170,35 +181,18 @@ for message in st.session_state.messages:
                 mime="text/html"
             )
 
-# Welcome message and example prompts
-if not st.session_state.messages:
-    with st.chat_message("assistant"):
-        welcome_msg = """
-        👋 Hi! I'm your AI Email Assistant. I'll help you create personalized email campaigns for your contacts.
-        
-        To get started, upload your contacts.json file in the sidebar, then tell me what kind of campaign you'd like to create!
-        
-        Try one of these examples:
-        """
-        st.markdown(welcome_msg)
-        
-        # Example prompt buttons
-        cols = st.columns(len(EXAMPLE_PROMPTS))
-        for i, (name, prompt) in enumerate(EXAMPLE_PROMPTS.items()):
-            with cols[i]:
-                if st.button(f"📝 {name}", key=f"example_{i}", help=prompt):
-                    st.session_state.messages.append({"role": "assistant", "content": welcome_msg})
-                    st.session_state.messages.append({"role": "user", "content": prompt})
-                    st.session_state.selected_prompt = prompt
-                    st.rerun()
+# Always show example prompts if no campaign has started
+if st.session_state.current_step == 'welcome':
+    st.markdown("### Try one of these examples:")
+    cols = st.columns(len(EXAMPLE_PROMPTS))
+    for i, (name, prompt) in enumerate(EXAMPLE_PROMPTS.items()):
+        with cols[i]:
+            if st.button(f"📝 {name}", key=f"example_{i}", help=prompt):
+                st.session_state.messages.append({"role": "user", "content": prompt})
+                process_prompt(prompt)
+                st.rerun()
 
-# Handle user input or process selected prompt
-if st.session_state.selected_prompt:
-    prompt = st.session_state.selected_prompt
-    st.session_state.selected_prompt = None  # Clear the selection
-    process_prompt(prompt)
-
-# Always display the chat input field
+# Handle user input
 if prompt := st.chat_input("Describe your campaign or ask me anything..."):
     # Add user message to chat
     st.session_state.messages.append({"role": "user", "content": prompt})

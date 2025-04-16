@@ -6,6 +6,8 @@ from PIL import Image
 from io import BytesIO
 import base64
 from bs4 import BeautifulSoup
+from jinja2 import Environment, FileSystemLoader
+from datetime import datetime
 
 class HTMLProcessor:
     """Process HTML templates with content and generated images"""
@@ -117,26 +119,38 @@ class HTMLProcessor:
         Returns:
             Processed HTML with content and images
         """
-        # Read template
-        with open(template_path, 'r') as f:
-            template = f.read()
-        
         # Generate images based on content
         images = self.generate_email_images(content)
         
-        # Combine content and images
-        replacements = {**content, **images}
+        # Get the directory and filename from the template path
+        template_dir = os.path.dirname(template_path)
+        template_file = os.path.basename(template_path)
         
-        # Process template
-        soup = BeautifulSoup(template, 'html.parser')
+        # Set up Jinja2 environment with the correct template directory
+        env = Environment(loader=FileSystemLoader(template_dir if template_dir else '.'))
+        template = env.get_template(template_file)
         
-        # Replace all placeholders
-        html = template
-        for key, value in replacements.items():
-            placeholder = f"<!-- {key} -->"
-            html = html.replace(placeholder, str(value))
+        # Prepare template variables
+        template_vars = {
+            'content': content.get('body', ''),
+            'company_name': content.get('company_name', ''),
+            'privacy_link': '#',  # Default links
+            'terms_link': '#',
+            'unsubscribe_link': '#',
+            'subject': content.get('subject', 'Email Notification'),
+            'year': datetime.now().year,
+            'company_address': content.get('company_address', ''),
+            'logo_url': content.get('logo_url', ''),
+            'cta_button': bool(content.get('cta_text')),
+            'cta_url': content.get('cta_link', '#'),
+            'cta_text': content.get('cta_text', '')
+        }
         
-        return html
+        # Add generated images to template variables
+        template_vars.update(images)
+        
+        # Render the template
+        return template.render(**template_vars)
     
     @staticmethod
     def load_template(template_path: str) -> str:
