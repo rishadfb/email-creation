@@ -20,10 +20,23 @@ st.set_page_config(
 # Title
 st.title("🧠 AI Email Assistant")
 st.markdown("""
-A conversational AI-powered tool that generates personalized marketing emails using:
-- Apollo API for contact enrichment
-- Gemini for template selection and content generation
-- Pre-defined HTML templates
+A powerful email marketing tool that leverages advanced AI to create personalized campaigns:
+
+**Data Enrichment:**
+- Apollo for detailed contact information and company insights
+
+**AI-Powered Content:**
+- Gemini Flash for rapid template selection
+- Gemini Pro for generating personalized email content
+- Imagen 3.0 (Gemini's latest image generation) for creating:
+  - Context-aware hero images
+  - Feature illustrations
+  - Highlight section visuals
+
+**Template System:**
+- Responsive HTML templates
+- Dynamic content injection
+- Mobile-optimized layouts
 """)
 
 # Sidebar
