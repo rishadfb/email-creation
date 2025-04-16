@@ -118,7 +118,7 @@ class GeminiClient:
         
         # Simple approach without temperature or other settings
         response = self.client.models.generate_content(
-            model="gemini-2.0-pro",  # Using the pro model for content generation
+            model="gemini-2.0-flash",  # Switch to the pro model for content generation
             contents=prompt
         )
         

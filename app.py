@@ -197,7 +197,9 @@ if st.session_state.selected_prompt:
     prompt = st.session_state.selected_prompt
     st.session_state.selected_prompt = None  # Clear the selection
     process_prompt(prompt)
-elif prompt := st.chat_input("Describe your campaign or ask me anything..."):
+
+# Always display the chat input field
+if prompt := st.chat_input("Describe your campaign or ask me anything..."):
     # Add user message to chat
     st.session_state.messages.append({"role": "user", "content": prompt})
     process_prompt(prompt) 
