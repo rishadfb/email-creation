@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title><!-- SUBJECT --></title>
+    <title>{{ subject }}</title>
     <style>
       /* Base styles */
       body {
@@ -114,24 +114,23 @@
     <div class="container">
       <!-- Header Section -->
       <div class="header">
-        <!-- COMPANY_LOGO -->
-        <h1><!-- HEADLINE --></h1>
-        <p><!-- SUBHEADLINE --></p>
+        {% if logo_url %}
+        <img src="{{ logo_url }}" alt="{{ company_name }} Logo" class="logo" />
+        {% endif %}
+        <h1>{{ headline }}</h1>
+        <p>{{ subheadline }}</p>
       </div>
 
       <!-- Hero Section -->
       <div class="section" style="text-align: center">
         <img
-          src="<!-- HERO_IMAGE -->"
+          src="{{ HERO_IMAGE }}"
           alt="Welcome"
           class="img-fluid"
           style="width: 100%; max-width: 500px"
         />
-        <h2>
-          Welcome to
-          <!-- COMPANY_NAME -->
-        </h2>
-        <!-- WELCOME_MESSAGE -->
+        <h2>Welcome to {{ company_name }}</h2>
+        <p>{{ welcome_message }}</p>
       </div>
 
       <!-- Two Column Features -->
@@ -139,21 +138,21 @@
         <div class="two-col">
           <div class="col">
             <img
-              src="<!-- FEATURE1_IMAGE -->"
-              alt="Feature 1"
+              src="{{ FEATURE1_IMAGE }}"
+              alt="{{ feature1_title }}"
               class="img-fluid"
             />
-            <h3><!-- FEATURE1_TITLE --></h3>
-            <!-- FEATURE1_TEXT -->
+            <h3>{{ feature1_title }}</h3>
+            <p>{{ feature1_text }}</p>
           </div>
           <div class="col">
             <img
-              src="<!-- FEATURE2_IMAGE -->"
-              alt="Feature 2"
+              src="{{ FEATURE2_IMAGE }}"
+              alt="{{ feature2_title }}"
               class="img-fluid"
             />
-            <h3><!-- FEATURE2_TITLE --></h3>
-            <!-- FEATURE2_TEXT -->
+            <h3>{{ feature2_title }}</h3>
+            <p>{{ feature2_text }}</p>
           </div>
         </div>
       </div>
@@ -162,37 +161,35 @@
       <div class="section" style="text-align: center">
         <div class="feature-box">
           <img
-            src="<!-- HIGHLIGHT_IMAGE -->"
-            alt="Special Highlight"
+            src="{{ HIGHLIGHT_IMAGE }}"
+            alt="{{ highlight_title }}"
             class="img-fluid"
             style="max-width: 300px; margin: 0 auto"
           />
-          <h3><!-- HIGHLIGHT_TITLE --></h3>
-          <!-- HIGHLIGHT_TEXT -->
+          <h3>{{ highlight_title }}</h3>
+          <p>{{ highlight_text }}</p>
         </div>
       </div>
 
       <!-- CTA Section -->
       <div class="section" style="text-align: center">
-        <h2><!-- CTA_HEADLINE --></h2>
-        <!-- CTA_TEXT -->
-        <a href="<!-- CTA_LINK -->" class="cta-button"> Get Started Now </a>
+        <h2>{{ cta_headline }}</h2>
+        <p>{{ cta_text }}</p>
+        {% if cta_button %}
+        <a href="{{ cta_url }}" class="cta-button">Get Started Now</a>
+        {% endif %}
       </div>
 
       <!-- Footer -->
       <div class="footer">
+        <p>© {{ year }} {{ company_name }}. All rights reserved.</p>
+        {% if company_address %}
+        <p>Our address: {{ company_address }}</p>
+        {% endif %}
         <p>
-          © 2024
-          <!-- COMPANY_NAME -->. All rights reserved.
-        </p>
-        <p>
-          Our address:
-          <!-- COMPANY_ADDRESS -->
-        </p>
-        <p>
-          <a href="<!-- PRIVACY_LINK -->">Privacy Policy</a> |
-          <a href="<!-- TERMS_LINK -->">Terms of Service</a> |
-          <a href="<!-- UNSUBSCRIBE_LINK -->">Unsubscribe</a>
+          <a href="{{ privacy_link }}">Privacy Policy</a> |
+          <a href="{{ terms_link }}">Terms of Service</a> |
+          <a href="{{ unsubscribe_link }}">Unsubscribe</a>
         </p>
       </div>
     </div>

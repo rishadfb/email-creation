@@ -132,18 +132,40 @@ class HTMLProcessor:
         
         # Prepare template variables
         template_vars = {
-            'content': content.get('body', ''),
-            'company_name': content.get('company_name', ''),
-            'privacy_link': '#',  # Default links
-            'terms_link': '#',
-            'unsubscribe_link': '#',
+            # Basic content
             'subject': content.get('subject', 'Email Notification'),
-            'year': datetime.now().year,
+            'headline': content.get('headline', ''),
+            'subheadline': content.get('subheadline', ''),
+            'welcome_message': content.get('welcome_message', ''),
+            
+            # Company info
+            'company_name': content.get('company_name', ''),
             'company_address': content.get('company_address', ''),
             'logo_url': content.get('logo_url', ''),
+            
+            # Features
+            'feature1_title': content.get('feature1_title', ''),
+            'feature1_text': content.get('feature1_text', ''),
+            'feature2_title': content.get('feature2_title', ''),
+            'feature2_text': content.get('feature2_text', ''),
+            
+            # Highlight section
+            'highlight_title': content.get('highlight_title', ''),
+            'highlight_text': content.get('highlight_text', ''),
+            
+            # CTA section
+            'cta_headline': content.get('cta_headline', ''),
+            'cta_text': content.get('cta_text', ''),
             'cta_button': bool(content.get('cta_text')),
-            'cta_url': content.get('cta_link', '#'),
-            'cta_text': content.get('cta_text', '')
+            'cta_url': content.get('cta_url', '#'),
+            
+            # Footer links
+            'privacy_link': content.get('privacy_link', '#'),
+            'terms_link': content.get('terms_link', '#'),
+            'unsubscribe_link': content.get('unsubscribe_link', '#'),
+            
+            # Metadata
+            'year': datetime.now().year,
         }
         
         # Add generated images to template variables

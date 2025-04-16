@@ -113,7 +113,7 @@ class GeminiClient:
         - cta_text: Action-oriented button text
         
         Make the content professional, engaging, and personalized to the contact's role and industry.
-        Format the response as a valid JSON object.
+        Return ONLY the JSON object with no additional text or formatting.
         """
         
         # Simple approach without temperature or other settings
@@ -123,8 +123,17 @@ class GeminiClient:
         )
         
         try:
-            # Safely parse JSON response
-            content = json.loads(response.text)
+            # Clean up the response text to handle markdown code blocks
+            text = response.text.strip()
+            if text.startswith('```'):
+                # Remove the first line (```json or similar)
+                text = text.split('\n', 1)[1]
+            if text.endswith('```'):
+                # Remove the last line (```)
+                text = text.rsplit('\n', 1)[0]
+            
+            # Parse the cleaned JSON
+            content = json.loads(text)
             
             required_keys = {
                 'subject', 'preheader', 'headline', 'subheadline', 'welcome_message',
