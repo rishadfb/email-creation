@@ -5,6 +5,11 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# Check for required API keys
+if not os.getenv("APOLLO_API_KEY") or not os.getenv("GEMINI_API_KEY"):
+    st.error("⚠️ Missing API keys. Please ensure APOLLO_API_KEY and GEMINI_API_KEY are set in your .env file.")
+    st.stop()
+
 # Page config
 st.set_page_config(
     page_title="AI Email Assistant",
@@ -23,13 +28,8 @@ A conversational AI-powered tool that generates personalized marketing emails us
 
 # Sidebar
 with st.sidebar:
-    st.header("Configuration")
-    # File uploader for contacts
-    uploaded_file = st.file_uploader("Upload Contacts (JSON)", type=['json'])
-    
-    # API Keys input
-    apollo_key = st.text_input("Apollo API Key", type="password", value=os.getenv("APOLLO_API_KEY", ""))
-    gemini_key = st.text_input("Gemini API Key", type="password", value=os.getenv("GEMINI_API_KEY", ""))
+    st.header("Add a contacts.json file")
+    uploaded_file = st.file_uploader("", type=['json'])
 
 # Main content area
 if not uploaded_file:

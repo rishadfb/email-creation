@@ -1,0 +1,26 @@
+# Environment variables and secrets
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+.pdm-python
+__pypackages__/
+
+# IDE and system files
+.idea/
+.vscode/
+.DS_Store
+
+# Logs
+*.log
+logs/
+
+# Test and coverage
+.coverage
+.pytest_cache/
+
+# Email testing
+test_emails/
+*.html.tmp
