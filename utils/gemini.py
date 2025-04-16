@@ -2,6 +2,7 @@ import os
 import json
 from typing import Dict, List, Optional
 from google import genai
+from google.genai import types
 
 class GeminiClient:
     """Client for interacting with Google's Gemini API"""
@@ -46,14 +47,10 @@ class GeminiClient:
         Return only the template name that would be most effective.
         """
         
+        # Simple approach without temperature or other settings
         response = self.client.models.generate_content(
             model="gemini-2.0-flash",  # Using the faster model for template selection
-            contents=prompt,
-            generation_config={
-                'temperature': 0.2,  # Lower temperature for more focused selection
-                'top_p': 0.8,
-                'top_k': 40,
-            }
+            contents=prompt
         )
         return response.text.strip()
     
@@ -119,14 +116,10 @@ class GeminiClient:
         Format the response as a valid JSON object.
         """
         
+        # Simple approach without temperature or other settings
         response = self.client.models.generate_content(
             model="gemini-2.0-pro",  # Using the pro model for content generation
-            contents=prompt,
-            generation_config={
-                'temperature': 0.7,  # Higher temperature for creative content
-                'top_p': 0.9,
-                'top_k': 40,
-            }
+            contents=prompt
         )
         
         try:
