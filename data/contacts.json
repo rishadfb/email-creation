@@ -1,26 +1,54 @@
-[
-  {
-    "email": "jennifer.lee@target.com",
-    "first_name": "Jennifer",
-    "job_title": "Marketing Director",
-    "company": "Target",
-    "industry": "Retail",
-    "location": "Minneapolis, MN"
-  },
-  {
-    "email": "michael.chen@salesforce.com",
-    "first_name": "Michael",
-    "job_title": "",
-    "company": "Salesforce",
-    "industry": "Technology",
-    "location": "San Francisco, CA"
-  },
-  {
-    "email": "sarah.patel@acme.co",
-    "first_name": "Sarah",
-    "job_title": "Head of Growth",
-    "company": "Acme Co",
-    "industry": "",
-    "location": "New York, NY"
-  }
-]
+{
+  "contacts": [
+    {
+      "first_name": "Sarah",
+      "last_name": "Chen",
+      "email": "sarah.chen@techcorp.com",
+      "job_title": "Engineering Manager",
+      "company": "TechCorp Solutions",
+      "industry": "Software Development",
+      "company_size": "50-200",
+      "location": "San Francisco, CA"
+    },
+    {
+      "first_name": "Michael",
+      "last_name": "Rodriguez",
+      "email": "mrodriguez@datainsights.io",
+      "job_title": "Data Science Lead",
+      "company": "DataInsights AI",
+      "industry": "Artificial Intelligence",
+      "company_size": "10-50",
+      "location": "Austin, TX"
+    },
+    {
+      "first_name": "Emma",
+      "last_name": "Thompson",
+      "email": "emma.t@cloudscape.net",
+      "job_title": "Cloud Solutions Architect",
+      "company": "Cloudscape Technologies",
+      "industry": "Cloud Computing",
+      "company_size": "200-500",
+      "location": "Seattle, WA"
+    },
+    {
+      "first_name": "James",
+      "last_name": "Wilson",
+      "email": "jwilson@securetech.com",
+      "job_title": "Security Director",
+      "company": "SecureTech",
+      "industry": "Cybersecurity",
+      "company_size": "100-250",
+      "location": "Boston, MA"
+    },
+    {
+      "first_name": "Priya",
+      "last_name": "Patel",
+      "email": "priya.p@healthai.com",
+      "job_title": "Product Manager",
+      "company": "HealthAI Solutions",
+      "industry": "Healthcare Technology",
+      "company_size": "50-100",
+      "location": "Chicago, IL"
+    }
+  ]
+}
