@@ -1,7 +1,7 @@
 [project]
 name = "email-creation"
 version = "0.1.0"
-description = "Default template for PDM package"
+description = "AI-powered email campaign generator using Streamlit and Gemini"
 authors = [
     {name = "Rishad Bharucha", email = "rb2102@gmail.com"},
 ]
@@ -23,6 +23,7 @@ license = {text = "MIT"}
 
 [tool.pdm]
 distribution = false
+package-mode = false  # Disable package mode since this is an application
 
 [tool.pdm.dev-dependencies]
 test = [
@@ -32,3 +33,7 @@ test = [
     "mypy",
     "ruff",
 ]
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
