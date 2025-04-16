@@ -5,7 +5,17 @@ description = "Default template for PDM package"
 authors = [
     {name = "Rishad Bharucha", email = "rb2102@gmail.com"},
 ]
-dependencies = []
+dependencies = [
+    "streamlit",
+    "python-dotenv",
+    "google-genai",
+    "requests",
+    "beautifulsoup4",
+    "jinja2",
+    "lxml",
+    "pydantic",
+    "typing-extensions",
+]
 requires-python = "==3.12.*"
 readme = "README.md"
 license = {text = "MIT"}
@@ -13,3 +23,12 @@ license = {text = "MIT"}
 
 [tool.pdm]
 distribution = false
+
+[tool.pdm.dev-dependencies]
+test = [
+    "pytest",
+    "black",
+    "isort",
+    "mypy",
+    "ruff",
+]
