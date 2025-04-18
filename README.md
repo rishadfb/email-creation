@@ -1,8 +1,17 @@
-# AI Email Assistant
+# AI Agent Assistants
 
-A powerful AI-powered tool that generates personalized marketing emails using Streamlit, Gemini AI, and Jinja2 templating.
+A flexible multi-assistant framework with AI-powered tools for various tasks. Currently includes an Email Assistant that generates personalized marketing emails using Streamlit, Gemini AI, and Jinja2 templating.
 
 ## 🌟 Features
+
+### Framework Features
+
+- **Multi-Assistant Architecture**: Easily add new AI assistants with different capabilities
+- **Modular Design**: Each assistant manages its own UI, state, and business logic
+- **Consistent User Experience**: Common UI patterns across different assistants
+- **Extensible State Management**: Each assistant has its own namespaced state
+
+### Email Assistant Features
 
 - **AI-Powered Content Generation**: Uses Google's Gemini AI to create personalized email content
 - **Dynamic Image Generation**: Creates custom images for email templates using Imagen 3.0
@@ -55,12 +64,17 @@ source .venv/bin/activate  # On Unix/macOS
 2. Start the Streamlit app:
 
 ```bash
-streamlit run app.py
+pdm run python -m streamlit run app.py
 ```
 
 ## 📝 Usage
 
-1. **Upload Contacts**:
+1. **Select an Assistant**:
+
+   - Choose from available assistants using the dropdown in the sidebar
+   - Each assistant provides different functionality
+
+2. **Upload Contacts** (for Email Assistant):
 
    - Prepare a JSON file with your contacts in the following format:
 
@@ -78,34 +92,44 @@ streamlit run app.py
    }
    ```
 
-   - Upload the file using the sidebar uploader
+   - Upload the file in the main content area
 
-2. **Create Campaign**:
+3. **Create Campaign**:
 
    - Choose from example prompts or write your own campaign description
    - The AI will select an appropriate template and generate personalized content
    - Preview the email with a selected contact
    - Make adjustments as needed
 
-3. **Export**:
+4. **Export**:
+
    - Download the generated HTML email
    - Use the HTML in your email marketing platform
 
 ## 📁 Project Structure
 
 ```
-email-creation/
-├── app.py                 # Main Streamlit application
+ai-agent-assistants/
+├── app.py                # Main Streamlit application
 ├── utils/
-│   ├── gemini.py         # Gemini AI integration
-│   └── html_utils.py     # HTML template processing
-├── templates/
-│   └── welcome_email.html # Email template
-├── .env                   # Environment variables
-└── README.md             # Documentation
+│   ├── assistants/       # Assistant implementations
+│   │   ├── base.py      # Base Assistant class
+│   │   ├── registry.py  # Assistant registry
+│   │   └── email_assistant.py # Email Assistant implementation
+│   ├── agents/          # AI agents for specific tasks
+│   ├── core/            # Core utilities
+│   ├── orchestration/   # Process orchestration
+│   ├── services/        # External service integrations
+│   └── ui/              # UI components
+├── templates/           # Email templates organized by type
+│   ├── welcome/
+│   ├── announcements/
+│   └── newsletters/
+├── .env                 # Environment variables
+└── README.md           # Documentation
 ```
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 - **Streamlit**: Web interface and chat UI
 - **Google Gemini AI**: Content generation and template selection
@@ -113,8 +137,10 @@ email-creation/
 - **Jinja2**: HTML template processing
 - **Python-dotenv**: Environment variable management
 - **BeautifulSoup4**: HTML parsing and manipulation
+- **PDM**: Python dependency management
+- **Object-Oriented Design**: Modular architecture with inheritance and composition
 
-## 🔒 Security Notes
+## Security Notes
 
 - Never commit your `.env` file or API keys to version control
 - Always validate and sanitize contact data before processing
