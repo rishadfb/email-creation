@@ -81,14 +81,17 @@ def render_assistant_ui() -> None:
 
 def render_chat_messages() -> None:
     """Render all chat messages with their HTML content if available."""
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-            if "html" in message:
-                st.components.v1.html(message["html"], height=800, scrolling=True)
-                st.download_button(
-                    "Download HTML",
-                    message["html"],
-                    file_name="email_preview.html",
-                    mime="text/html"
-                )
+    # We're still using the shared messages state for now to maintain compatibility
+    # In the future, each assistant could have its own message history
+    if 'messages' in st.session_state and st.session_state.messages:
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+                if "html" in message:
+                    st.components.v1.html(message["html"], height=800, scrolling=True)
+                    st.download_button(
+                        "Download HTML",
+                        message["html"],
+                        file_name="email_preview.html",
+                        mime="text/html"
+                    )

@@ -26,7 +26,7 @@ A powerful AI-powered tool that generates personalized marketing emails using St
 
 ```bash
 git clone <repository-url>
-cd email-creation
+cd ai-agent-assistants
 ```
 
 2. Install dependencies using PDM:

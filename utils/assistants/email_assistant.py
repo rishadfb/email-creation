@@ -11,7 +11,7 @@ from typing import Dict, Optional, List
 
 from .base import Assistant
 from ..orchestration.orchestrator import EmailOrchestrator
-from ..core.state import add_message, get_contacts, update_campaign_details
+from ..core.state import add_message, get_contacts
 from ..core.exceptions import EmailCreationError
 
 class EmailAssistant(Assistant):
@@ -35,10 +35,16 @@ class EmailAssistant(Assistant):
         
     def initialize_session_state(self) -> None:
         """Initialize email assistant session state variables."""
-        if "email_assistant" not in st.session_state:
-            st.session_state.email_assistant = {
+        if self.state_key not in st.session_state:
+            st.session_state[self.state_key] = {
                 "current_step": "welcome",
-                "campaign_details": {},
+                "campaign_details": {
+                    'intent': '',
+                    'preview_contact': None,
+                    'template': None,
+                    'content': None,
+                    'html': None
+                },
             }
     
     def render_sidebar(self) -> None:
@@ -102,7 +108,8 @@ class EmailAssistant(Assistant):
     
     def render_example_prompts(self) -> Optional[str]:
         """Render email assistant example prompts."""
-        if st.session_state.email_assistant["current_step"] == 'welcome':
+        state = self.get_state()
+        if state["current_step"] == 'welcome':
             # Check if contacts exist in session state
             contacts_exist = 'contacts' in st.session_state and st.session_state.contacts
             
@@ -152,15 +159,16 @@ class EmailAssistant(Assistant):
         """Process a user prompt and generate an email response."""
         contacts = get_contacts()
         if not contacts:
-            add_message("assistant", "Please upload your contacts.json file first! I need it to create personalized emails.")
+            self.add_message("assistant", "Please upload your contacts.json file first! I need it to create personalized emails.")
             return
+        
+        state = self.get_state()
+        campaign_details = state["campaign_details"]
             
-        if st.session_state.email_assistant["current_step"] == 'welcome':
+        if state["current_step"] == 'welcome':
             # Store campaign intent and preview contact
-            update_campaign_details(
-                intent=prompt,
-                preview_contact=contacts[0]
-            )
+            campaign_details["intent"] = prompt
+            campaign_details["preview_contact"] = contacts[0]
             
             # Setup status displays
             self.orchestrator.setup_status_displays()
@@ -172,11 +180,16 @@ class EmailAssistant(Assistant):
                     contact=contacts[0]
                 )
                 
+                # Store results in campaign details
+                campaign_details["template"] = result.get("template")
+                campaign_details["content"] = result.get("content")
+                campaign_details["html"] = result.get("html")
+                
                 # Display the result
                 self.render_result(result)
                 
                 # Add to chat history
-                add_message(
+                self.add_message(
                     role="assistant",
                     content="✨ Here's your personalized email preview! Let me know if you'd like any changes.",
                     html=result['html']
@@ -185,29 +198,30 @@ class EmailAssistant(Assistant):
             except EmailCreationError as e:
                 # Handle specific email creation errors
                 st.error(f"Failed to create email: {str(e)}")
-                add_message(
+                self.add_message(
                     role="assistant",
                     content=f"I encountered an error while creating your email: {str(e)}\nPlease try again or modify your request."
                 )
             except Exception as e:
                 # Handle unexpected errors
                 st.error(f"An unexpected error occurred: {str(e)}")
-                add_message(
+                self.add_message(
                     role="assistant",
                     content=f"I encountered an unexpected error: {str(e)}\nPlease try again later."
                 )
             
-            st.session_state.email_assistant["current_step"] = 'feedback'
+            # Update the step
+            self.update_state(current_step="feedback")
             
-        elif st.session_state.email_assistant["current_step"] == 'feedback':
+        elif state["current_step"] == 'feedback':
             # Handle feedback and make adjustments
-            add_message(
+            self.add_message(
                 role="assistant",
                 content="I'll help you refine the email. What specific aspects would you like to change?"
             )
             
         else:
-            add_message(
+            self.add_message(
                 role="assistant",
                 content="I'm here to help! What would you like to do with your email campaign?"
             )

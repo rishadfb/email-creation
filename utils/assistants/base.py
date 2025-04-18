@@ -22,11 +22,32 @@ class Assistant(ABC):
         self.name = name
         self.emoji = emoji
         self.description = description
+        self.state_key = f"{name.lower().replace(' ', '_')}_assistant"
         
     @property
     def display_name(self) -> str:
         """Return the formatted display name with emoji."""
         return f"{self.emoji} {self.name}"
+    
+    def get_state(self) -> Dict:
+        """Get this assistant's state from the session state."""
+        if self.state_key not in st.session_state:
+            self.initialize_session_state()
+        return st.session_state[self.state_key]
+    
+    def update_state(self, **kwargs) -> None:
+        """Update this assistant's state with the provided key-value pairs."""
+        state = self.get_state()
+        state.update(kwargs)
+    
+    def add_message(self, role: str, content: str, html: Optional[str] = None) -> None:
+        """Add a message to the chat history."""
+        message = {"role": role, "content": content}
+        if html:
+            message["html"] = html
+        if "messages" not in st.session_state:
+            st.session_state.messages = []
+        st.session_state.messages.append(message)
     
     @abstractmethod
     def render_sidebar(self) -> None:

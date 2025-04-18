@@ -1,7 +1,7 @@
 import asyncio
 import streamlit as st
 from utils.core.state import initialize_session_state, add_message
-from utils.ui.components import setup_page
+from utils.ui.page_utils import setup_page
 from utils.ui.assistant_ui import render_assistant_selector, render_assistant_ui
 from utils.assistants.registry import registry
 from utils.core.config import is_config_valid, get_missing_keys
@@ -39,7 +39,7 @@ example_prompt = render_assistant_ui()
 
 # Process example prompt if one was selected
 if example_prompt:
-    add_message("user", example_prompt)
+    current_assistant.add_message("user", example_prompt)
     asyncio.run(process_user_input(example_prompt))
     st.rerun()
 
@@ -49,7 +49,7 @@ contacts_exist = 'contacts' in st.session_state and st.session_state.contacts
 # Handle user input - only enable if contacts exist
 if contacts_exist:
     if prompt := st.chat_input("Describe your campaign or ask me anything..."):
-        add_message("user", prompt)
+        current_assistant.add_message("user", prompt)
         asyncio.run(process_user_input(prompt))
 else:
     # Disabled chat input with explanation
