@@ -177,7 +177,8 @@ class EmailAssistant(Assistant):
                 # Start the email creation process
                 result = await self.orchestrator.create_email(
                     campaign_intent=prompt,
-                    contact=contacts[0]
+                    contact=contacts[0],
+                    assistant=self
                 )
                 
                 # Store results in campaign details

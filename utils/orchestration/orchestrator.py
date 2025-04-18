@@ -1,8 +1,9 @@
-from typing import Dict
+from typing import Dict, Any
 import asyncio
 import streamlit as st
 from ..agents import EmailTemplateSelector, EmailContentGenerator, EmailHtmlCompiler
 from ..core.exceptions import EmailCreationError
+from ..assistants.base import Assistant
 
 class EmailOrchestrator:
     def __init__(self):
@@ -54,10 +55,15 @@ class EmailOrchestrator:
             st.write("")
             st.write("")
     
-    async def create_email(self, campaign_intent: str, contact: Dict) -> Dict:
+    async def create_email(self, campaign_intent: str, contact: Dict, assistant: Assistant) -> Dict:
         """
         Create an email by orchestrating the template selection, content generation,
         and compilation agents.
+        
+        Args:
+            campaign_intent: The intent of the campaign
+            contact: The contact to use for personalization
+            assistant: The assistant instance for state management
         """
         try:
             # Set up status callbacks for each agent
@@ -71,6 +77,10 @@ class EmailOrchestrator:
                 lambda status, progress: self._update_status_display('compilation', status, progress)
             )
             
+            # Get the assistant's state
+            state = assistant.get_state()
+            campaign_details = state.get("campaign_details", {})
+            
             # Start template selection and content generation in parallel
             template_task = asyncio.create_task(
                 self._select_template(campaign_intent)
@@ -82,8 +92,8 @@ class EmailOrchestrator:
             # Wait for both to complete
             template, content = await asyncio.gather(template_task, content_task)
             
-            # Store results in session state
-            st.session_state.campaign_details.update({
+            # Update campaign details in the assistant's state
+            campaign_details.update({
                 'template': template,
                 'content': content
             })
@@ -91,8 +101,11 @@ class EmailOrchestrator:
             # Once we have both, start compilation
             html = await self._compile_html(template, content)
             
-            # Store final HTML
-            st.session_state.campaign_details['html'] = html
+            # Store final HTML in the assistant's state
+            campaign_details['html'] = html
+            
+            # Update the assistant's state
+            assistant.update_state(campaign_details=campaign_details)
             
             return {
                 'template': template,
