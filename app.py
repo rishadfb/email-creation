@@ -1,17 +1,11 @@
 import asyncio
 import streamlit as st
-from utils.orchestration.orchestrator import EmailOrchestrator
-from utils.core.state import (
-    initialize_session_state, add_message, get_contacts,
-    update_campaign_details
-)
-from utils.ui.components import (
-    setup_page, render_sidebar, render_chat_messages,
-    render_example_prompts, render_welcome_message,
-    render_result
-)
+from utils.core.state import initialize_session_state, add_message
+from utils.ui.components import setup_page
+from utils.ui.assistant_ui import render_assistant_selector, render_assistant_ui
+from utils.assistants.registry import registry
 from utils.core.config import is_config_valid, get_missing_keys
-from utils.core.exceptions import ConfigurationError, EmailCreationError
+from utils.core.exceptions import ConfigurationError
 
 # Check for required API keys
 if not is_config_valid():
@@ -19,103 +13,44 @@ if not is_config_valid():
     st.error(f"⚠️ Missing API keys: {', '.join(missing_keys)}. Please ensure these are set in your .env file.")
     st.stop()
 
-# Initialize orchestrator
-@st.cache_resource
-def init_orchestrator():
-    return EmailOrchestrator()
-
 # Setup the page
 setup_page()
 
 # Initialize session state
 initialize_session_state()
 
-# Initialize orchestrator
-orchestrator = init_orchestrator()
+async def process_user_input(prompt: str):
+    """Process user input with the current assistant"""
+    # Get the current assistant
+    assistant = registry.get_current_assistant()
+    
+    # Process the prompt with the current assistant
+    await assistant.process_prompt(prompt)
 
-async def process_prompt(prompt: str):
-    """Process a prompt and generate appropriate response"""
-    contacts = get_contacts()
-    if not contacts:
-        add_message("assistant", "Please upload your contacts.json file first! I need it to create personalized emails.")
-        return
-        
-    if st.session_state.current_step == 'welcome':
-        # Store campaign intent and preview contact
-        update_campaign_details(
-            intent=prompt,
-            preview_contact=contacts[0]
-        )
-        
-        # Setup status displays
-        orchestrator.setup_status_displays()
-        
-        try:
-            # Start the email creation process
-            result = await orchestrator.create_email(
-                campaign_intent=prompt,
-                contact=contacts[0]
-            )
-            
-            # Display the result
-            render_result(result)
-            
-            # Add to chat history
-            add_message(
-                role="assistant",
-                content="✨ Here's your personalized email preview! Let me know if you'd like any changes.",
-                html=result['html']
-            )
-            
-        except EmailCreationError as e:
-            # Handle specific email creation errors
-            st.error(f"Failed to create email: {str(e)}")
-            add_message(
-                role="assistant",
-                content=f"I encountered an error while creating your email: {str(e)}\nPlease try again or modify your request."
-            )
-        except Exception as e:
-            # Handle unexpected errors
-            st.error(f"An unexpected error occurred: {str(e)}")
-            add_message(
-                role="assistant",
-                content=f"I encountered an unexpected error: {str(e)}\nPlease try again later."
-            )
-        
-        st.session_state.current_step = 'feedback'
-        
-    elif st.session_state.current_step == 'feedback':
-        # Handle feedback and make adjustments
-        add_message(
-            role="assistant",
-            content="I'll help you refine the email. What specific aspects would you like to change?"
-        )
-        
-    else:
-        add_message(
-            role="assistant",
-            content="I'm here to help! What would you like to do with your email campaign?"
-        )
+# Render the assistant selector in the sidebar
+render_assistant_selector()
 
-# Render the sidebar
-render_sidebar()
+# Render the current assistant's sidebar
+current_assistant = registry.get_current_assistant()
+current_assistant.render_sidebar()
 
-# Main chat interface
-st.title("🧠 AI Email Assistant")
+# Render the assistant UI and get any selected example prompt
+example_prompt = render_assistant_ui()
 
-# Welcome message
-render_welcome_message()
-
-# Display chat messages
-render_chat_messages()
-
-# Show example prompts
-if example_prompt := render_example_prompts():
+# Process example prompt if one was selected
+if example_prompt:
     add_message("user", example_prompt)
-    asyncio.run(process_prompt(example_prompt))
+    asyncio.run(process_user_input(example_prompt))
     st.rerun()
 
-# Handle user input
-if prompt := st.chat_input("Describe your campaign or ask me anything..."):
-    add_message("user", prompt)
-    asyncio.run(process_prompt(prompt)) 
+# Check if contacts exist
+contacts_exist = 'contacts' in st.session_state and st.session_state.contacts
+
+# Handle user input - only enable if contacts exist
+if contacts_exist:
+    if prompt := st.chat_input("Describe your campaign or ask me anything..."):
+        add_message("user", prompt)
+        asyncio.run(process_user_input(prompt))
+else:
+    # Disabled chat input with explanation
+    st.chat_input("Please upload contacts first...", disabled=True)
