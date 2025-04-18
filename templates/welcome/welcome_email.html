@@ -43,14 +43,30 @@
 
       /* Two-column layout */
       .two-col {
-        display: inline-block;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
         width: 100%;
       }
 
       .col {
-        width: 48%;
-        float: left;
-        margin: 1%;
+        flex: 1;
+        min-width: 250px;
+        background-color: #f9fafb;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      
+      .col h3 {
+        margin-top: 15px;
+        margin-bottom: 10px;
+        color: #2d3748;
+      }
+      
+      .col p {
+        color: #4a5568;
+        margin-bottom: 0;
       }
 
       /* Feature box */

@@ -84,44 +84,86 @@ class GeminiHtmlCompiler(HtmlCompiler):
         
         # Generate hero image based on welcome message and company
         hero_prompt = f"""
-        Create a professional and modern hero banner image for {content['company_name']}.
-        The image should reflect this message: {content['welcome_message']}
-        Make it suitable for an email header with clean, corporate aesthetics.
-        Ensure it's well-lit, professional, and engaging.
-        The style should be photorealistic and high-quality.
-        Include subtle branding elements and avoid text in the image.
+        Create a professional, minimalist hero banner image for {content['company_name']}.
+        Concept: {content['welcome_message']}
+        
+        STYLE REQUIREMENTS:
+        - Clean, modern aesthetic with subtle color palette
+        - Minimalist composition with plenty of negative space
+        - High-end corporate/professional look
+        - Photorealistic, not illustrated or cartoon-like
+        - Subtle lighting effects and shadows for depth
+        
+        IMPORTANT RESTRICTIONS:
+        - NO TEXT whatsoever in the image
+        - NO logos or explicit branding elements
+        - NO busy patterns or distracting elements
+        - NO people with recognizable faces
+        - Image should be abstract enough to work in any industry
         """
         images['HERO_IMAGE'] = self.ai_service.generate_image(hero_prompt)
         
         # Generate feature images based on feature content
         feature1_prompt = f"""
-        Create a professional illustration representing: {content['feature1_title']}
-        The illustration should convey: {content['feature1_text']}
-        Make it modern, clean, and iconic.
-        Use a style suitable for business communication.
-        Avoid text in the image.
-        Focus on simple, clear visual metaphors.
+        Create a professional image representing the concept: {content['feature1_title']}
+        Core idea to convey: {content['feature1_text']}
+        
+        STYLE REQUIREMENTS:
+        - Elegant, minimalist design with a single clear focal point
+        - Soft, professional color palette that complements corporate branding
+        - Clean lines and simple geometry
+        - High-quality photorealistic rendering
+        - Subtle shadows and lighting for dimension
+        
+        IMPORTANT RESTRICTIONS:
+        - NO TEXT or typography elements whatsoever
+        - NO cluttered compositions or busy backgrounds
+        - NO cartoon-style illustrations
+        - NO literal interpretations that look like stock photos
+        - Image should use abstract visual metaphors rather than literal representations
         """
         images['FEATURE1_IMAGE'] = self.ai_service.generate_image(feature1_prompt)
         
         feature2_prompt = f"""
-        Create a professional illustration representing: {content['feature2_title']}
-        The illustration should convey: {content['feature2_text']}
-        Make it modern, clean, and iconic.
-        Match the style of the first feature image.
-        Avoid text in the image.
-        Focus on simple, clear visual metaphors.
+        Create a professional image representing the concept: {content['feature2_title']}
+        Core idea to convey: {content['feature2_text']}
+        
+        STYLE REQUIREMENTS:
+        - Elegant, minimalist design with a single clear focal point
+        - Soft, professional color palette matching the first feature image
+        - Clean lines and simple geometry
+        - High-quality photorealistic rendering
+        - Subtle shadows and lighting for dimension
+        
+        IMPORTANT RESTRICTIONS:
+        - NO TEXT or typography elements whatsoever
+        - NO cluttered compositions or busy backgrounds
+        - NO cartoon-style illustrations
+        - NO literal interpretations that look like stock photos
+        - Image should use abstract visual metaphors rather than literal representations
+        - MUST visually complement the first feature image in style and tone
         """
         images['FEATURE2_IMAGE'] = self.ai_service.generate_image(feature2_prompt)
         
         # Generate highlight section image
         highlight_prompt = f"""
-        Create an impactful image for: {content['highlight_title']}
-        The image should represent: {content['highlight_text']}
-        Make it bold and attention-grabbing while maintaining professionalism.
-        Use a style that complements the other images.
-        Focus on a clean, modern aesthetic.
-        Avoid text in the image.
+        Create a premium, eye-catching image for the key highlight: {content['highlight_title']}
+        Core message to convey: {content['highlight_text']}
+        
+        STYLE REQUIREMENTS:
+        - Bold, sophisticated design with strong visual impact
+        - Rich, premium color palette that stands out while complementing the other images
+        - Elegant composition with a clear focal point
+        - High-end photorealistic rendering with depth and dimension
+        - Professional lighting effects that create visual interest
+        
+        IMPORTANT RESTRICTIONS:
+        - ABSOLUTELY NO TEXT or typography elements
+        - NO generic stock photo look or clichéd business imagery
+        - NO cluttered or busy compositions
+        - NO cartoon-style illustrations
+        - Image should use sophisticated visual metaphors that feel premium and exclusive
+        - Must harmonize with the other images while being slightly more impactful
         """
         images['HIGHLIGHT_IMAGE'] = self.ai_service.generate_image(highlight_prompt)
         

@@ -44,31 +44,55 @@
 
       /* Article section */
       .article {
-        margin-bottom: 30px;
+        margin-bottom: 40px;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
       }
 
       .article-image {
         width: 100%;
         height: auto;
-        border-radius: 8px;
-        margin-bottom: 15px;
+        display: block;
+        margin-bottom: 0;
+      }
+
+      .article-content {
+        padding: 20px;
       }
 
       .article-title {
         margin-top: 0;
-        color: #4a5568;
+        margin-bottom: 8px;
+        color: #2d3748;
+        font-size: 22px;
+        line-height: 1.3;
       }
 
       .article-meta {
-        color: #718096;
-        font-size: 14px;
-        margin-bottom: 10px;
+        display: inline-block;
+        color: #ffffff;
+        background-color: #805ad5;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 4px 10px;
+        border-radius: 4px;
+        margin-bottom: 15px;
       }
 
       .read-more {
+        display: inline-block;
         color: #805ad5;
         text-decoration: none;
         font-weight: bold;
+        margin-top: 10px;
+        border-bottom: 2px solid transparent;
+        transition: border-color 0.2s ease;
+      }
+      
+      .read-more:hover {
+        border-color: #805ad5;
       }
 
       /* Stats section */
@@ -76,29 +100,39 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
-        margin: 20px 0;
+        gap: 15px;
+        margin: 25px 0;
       }
 
       .stat-box {
-        flex-basis: 30%;
+        flex: 1;
+        min-width: 120px;
         background-color: #f7fafc;
-        border-radius: 8px;
-        padding: 15px;
+        border-radius: 12px;
+        padding: 20px 15px;
         text-align: center;
-        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease;
+      }
+      
+      .stat-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
 
       .stat-number {
-        font-size: 24px;
+        font-size: 28px;
         font-weight: bold;
         color: #805ad5;
         margin: 0;
+        line-height: 1.2;
       }
 
       .stat-label {
         font-size: 14px;
         color: #4a5568;
-        margin: 5px 0 0;
+        margin: 8px 0 0;
+        font-weight: 500;
       }
 
       /* CTA Button */
@@ -168,10 +202,12 @@
             alt="Featured Article"
             class="article-image"
           />
-          <h2 class="article-title">{{ feature1_title }}</h2>
-          <p class="article-meta">Featured Story</p>
-          <p>{{ feature1_text }}</p>
-          <a href="#" class="read-more">Read more →</a>
+          <div class="article-content">
+            <span class="article-meta">Featured Story</span>
+            <h2 class="article-title">{{ feature1_title }}</h2>
+            <p>{{ feature1_text }}</p>
+            <a href="#" class="read-more">Read more →</a>
+          </div>
         </div>
       </div>
 
@@ -202,22 +238,26 @@
             alt="Secondary Article"
             class="article-image"
           />
-          <h2 class="article-title">{{ feature2_title }}</h2>
-          <p class="article-meta">Community Spotlight</p>
-          <p>{{ feature2_text }}</p>
-          <a href="#" class="read-more">Read more →</a>
+          <div class="article-content">
+            <span class="article-meta">Community Spotlight</span>
+            <h2 class="article-title">{{ feature2_title }}</h2>
+            <p>{{ feature2_text }}</p>
+            <a href="#" class="read-more">Read more →</a>
+          </div>
         </div>
       </div>
 
       <!-- Highlight Section -->
-      <div class="section" style="text-align: center">
-        <h2>{{ highlight_title }}</h2>
-        <p>{{ highlight_text }}</p>
-        <img
-          src="{{ HIGHLIGHT_IMAGE }}"
-          alt="Highlight"
-          style="max-width: 100%; height: auto; margin: 15px 0; border-radius: 8px;"
-        />
+      <div class="section">
+        <div style="background-color: #f8f4ff; border-radius: 12px; padding: 25px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); text-align: center;">
+          <h2 style="color: #553c9a; margin-top: 0;">{{ highlight_title }}</h2>
+          <p style="color: #4a5568; margin-bottom: 20px;">{{ highlight_text }}</p>
+          <img
+            src="{{ HIGHLIGHT_IMAGE }}"
+            alt="Highlight"
+            style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);"
+          />
+        </div>
       </div>
 
       <!-- CTA Section -->
