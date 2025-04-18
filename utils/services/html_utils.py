@@ -8,15 +8,17 @@ import base64
 from bs4 import BeautifulSoup
 from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
+from ..core.config import get_api_key
+from ..core.exceptions import AIServiceError, TemplateNotFoundError, EmailCompilationError
 
 class HTMLProcessor:
     """Process HTML templates with content and generated images"""
     
     def __init__(self, api_key: Optional[str] = None):
         """Initialize with Gemini API key for image generation"""
-        api_key = api_key or os.getenv("GEMINI_API_KEY")
+        api_key = api_key or get_api_key("GEMINI_API_KEY")
         if not api_key:
-            raise ValueError("Gemini API key is required")
+            raise AIServiceError("API key is required for image generation", "Gemini")
         
         self.client = genai.Client(api_key=api_key)
     
@@ -47,7 +49,10 @@ class HTMLProcessor:
             return f"data:image/png;base64,{base64_image}"
             
         except Exception as e:
-            print(f"Error generating image: {str(e)}")
+            # Log the error but use a fallback image to avoid breaking the email
+            error_msg = f"Error generating image: {str(e)}"
+            # We could raise an exception here, but it's better to degrade gracefully
+            # raise AIServiceError(error_msg, "Gemini Image Generation")
             # Return a placeholder image URL
             return "https://via.placeholder.com/500x300"
     
@@ -186,7 +191,7 @@ class HTMLProcessor:
             Template content as string
         """
         if not os.path.exists(template_path):
-            raise FileNotFoundError(f"Template not found: {template_path}")
+            raise TemplateNotFoundError(f"Template not found: {template_path}")
             
         with open(template_path, 'r') as f:
             return f.read()

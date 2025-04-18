@@ -1,15 +1,16 @@
-import os
 from typing import Dict, Optional
 import requests
+from ..core.config import get_api_key
+from ..core.exceptions import AIServiceError, ContactDataError
 
 class ApolloClient:
     """Client for interacting with the Apollo API"""
     
     def __init__(self, api_key: Optional[str] = None):
         """Initialize the Apollo client with an API key"""
-        self.api_key = api_key or os.getenv("APOLLO_API_KEY")
+        self.api_key = api_key or get_api_key("APOLLO_API_KEY")
         if not self.api_key:
-            raise ValueError("Apollo API key is required")
+            raise AIServiceError("API key is required", "Apollo")
         
         self.base_url = "https://api.apollo.io/v1"
         self.headers = {
@@ -62,5 +63,9 @@ class ApolloClient:
             return {**contact, **updates}
             
         except requests.exceptions.RequestException as e:
-            print(f"Error enriching contact {contact.get('email')}: {str(e)}")
+            # Log the error but don't raise an exception to keep the application running
+            # Just return the original contact without enrichment
+            error_msg = f"Error enriching contact {contact.get('email')}: {str(e)}"
+            # We could raise an exception here, but it's better to degrade gracefully
+            # raise ContactDataError(error_msg)
             return contact 

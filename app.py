@@ -1,30 +1,28 @@
-import os
 import asyncio
-from dotenv import load_dotenv
 import streamlit as st
-from utils.orchestrator import EmailCreationOrchestrator
-from utils.state import (
+from utils.orchestration.orchestrator import EmailOrchestrator
+from utils.core.state import (
     initialize_session_state, add_message, get_contacts,
     update_campaign_details
 )
-from utils.ui import (
+from utils.ui.components import (
     setup_page, render_sidebar, render_chat_messages,
     render_example_prompts, render_welcome_message,
     render_result
 )
-
-# Load environment variables
-load_dotenv()
+from utils.core.config import is_config_valid, get_missing_keys
+from utils.core.exceptions import ConfigurationError, EmailCreationError
 
 # Check for required API keys
-if not os.getenv("APOLLO_API_KEY") or not os.getenv("GEMINI_API_KEY"):
-    st.error("⚠️ Missing API keys. Please ensure APOLLO_API_KEY and GEMINI_API_KEY are set in your .env file.")
+if not is_config_valid():
+    missing_keys = get_missing_keys()
+    st.error(f"⚠️ Missing API keys: {', '.join(missing_keys)}. Please ensure these are set in your .env file.")
     st.stop()
 
 # Initialize orchestrator
 @st.cache_resource
 def init_orchestrator():
-    return EmailCreationOrchestrator()
+    return EmailOrchestrator()
 
 # Setup the page
 setup_page()
@@ -69,11 +67,19 @@ async def process_prompt(prompt: str):
                 html=result['html']
             )
             
-        except Exception as e:
+        except EmailCreationError as e:
+            # Handle specific email creation errors
             st.error(f"Failed to create email: {str(e)}")
             add_message(
                 role="assistant",
                 content=f"I encountered an error while creating your email: {str(e)}\nPlease try again or modify your request."
+            )
+        except Exception as e:
+            # Handle unexpected errors
+            st.error(f"An unexpected error occurred: {str(e)}")
+            add_message(
+                role="assistant",
+                content=f"I encountered an unexpected error: {str(e)}\nPlease try again later."
             )
         
         st.session_state.current_step = 'feedback'

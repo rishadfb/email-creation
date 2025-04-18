@@ -1,13 +1,14 @@
 from typing import Dict
 import asyncio
 import streamlit as st
-from .agents import TemplateSelectionAgent, ContentGenerationAgent, EmailCompilationAgent
+from ..agents import EmailTemplateSelector, EmailContentGenerator, EmailHtmlCompiler
+from ..core.exceptions import EmailCreationError
 
-class EmailCreationOrchestrator:
+class EmailOrchestrator:
     def __init__(self):
-        self.template_agent = TemplateSelectionAgent()
-        self.content_agent = ContentGenerationAgent()
-        self.compilation_agent = EmailCompilationAgent()
+        self.template_selector = EmailTemplateSelector()
+        self.content_generator = EmailContentGenerator()
+        self.html_compiler = EmailHtmlCompiler()
         self._status_containers: Dict[str, Dict] = {}
         
     def _update_status_display(self, agent_name: str, status: str, progress: float):
@@ -60,22 +61,22 @@ class EmailCreationOrchestrator:
         """
         try:
             # Set up status callbacks for each agent
-            self.template_agent.set_status_callback(
+            self.template_selector.set_status_callback(
                 lambda status, progress: self._update_status_display('template', status, progress)
             )
-            self.content_agent.set_status_callback(
+            self.content_generator.set_status_callback(
                 lambda status, progress: self._update_status_display('content', status, progress)
             )
-            self.compilation_agent.set_status_callback(
+            self.html_compiler.set_status_callback(
                 lambda status, progress: self._update_status_display('compilation', status, progress)
             )
             
             # Start template selection and content generation in parallel
             template_task = asyncio.create_task(
-                self._run_template_selection(campaign_intent)
+                self._select_template(campaign_intent)
             )
             content_task = asyncio.create_task(
-                self._run_content_generation(contact, campaign_intent)
+                self._generate_content(contact, campaign_intent)
             )
             
             # Wait for both to complete
@@ -88,7 +89,7 @@ class EmailCreationOrchestrator:
             })
             
             # Once we have both, start compilation
-            html = await self._run_compilation(template, content)
+            html = await self._compile_html(template, content)
             
             # Store final HTML
             st.session_state.campaign_details['html'] = html
@@ -103,35 +104,43 @@ class EmailCreationOrchestrator:
             st.error(f"Error creating email: {str(e)}")
             raise
     
-    async def _run_template_selection(self, campaign_intent: str) -> str:
+    async def _select_template(self, campaign_intent: str) -> str:
         """Run template selection with status updates"""
         try:
-            return await self.template_agent.run(
+            # Get available templates from the template service instead of hardcoding
+            from ..services.template_service import TemplateService
+            template_service = TemplateService()
+            available_templates = template_service.get_available_templates()
+            
+            if not available_templates:
+                raise EmailCreationError("No templates found in the templates directory")
+                
+            return await self.template_selector.execute(
                 campaign_intent=campaign_intent,
-                templates=["welcome_email.html"]
+                templates=available_templates
             )
         except Exception as e:
             self._update_status_display('template', f"Error: {str(e)}", 1.0)
-            raise
+            raise EmailCreationError(f"Template selection failed: {str(e)}")
     
-    async def _run_content_generation(self, contact: Dict, campaign_purpose: str) -> Dict:
+    async def _generate_content(self, contact: Dict, campaign_purpose: str) -> Dict:
         """Run content generation with status updates"""
         try:
-            return await self.content_agent.run(
+            return await self.content_generator.execute(
                 contact=contact,
                 campaign_purpose=campaign_purpose
             )
         except Exception as e:
             self._update_status_display('content', f"Error: {str(e)}", 1.0)
-            raise
+            raise EmailCreationError(f"Content generation failed: {str(e)}")
     
-    async def _run_compilation(self, template: str, content: Dict) -> str:
+    async def _compile_html(self, template: str, content: Dict) -> str:
         """Run email compilation with status updates"""
         try:
-            return await self.compilation_agent.run(
+            return await self.html_compiler.execute(
                 template=template,
                 content=content
             )
         except Exception as e:
             self._update_status_display('compilation', f"Error: {str(e)}", 1.0)
-            raise 
+            raise EmailCreationError(f"HTML compilation failed: {str(e)}") 
