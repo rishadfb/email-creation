@@ -11,7 +11,7 @@ from typing import Dict, Optional, List
 
 from .base import Assistant
 from ..orchestration.orchestrator import EmailOrchestrator
-from ..core.state import add_message, get_contacts
+from ..core.state import add_message, get_contacts, set_contacts
 from ..core.exceptions import EmailCreationError
 
 class EmailAssistant(Assistant):
@@ -70,11 +70,30 @@ class EmailAssistant(Assistant):
             # File upload section with instructions
             uploaded_file = st.file_uploader("Upload Contacts", type=['json'], key="contact_uploader")
             
+            contacts_loaded = 'contacts' in st.session_state and st.session_state.contacts
+            
+            if not contacts_loaded:
+                if st.button("✨ Use Sample Data", key="use_sample_data"):
+                    try:
+                        with open("data/contacts.json", "r") as f:
+                            contacts_data = json.load(f)
+                        if not isinstance(contacts_data, dict) or 'contacts' not in contacts_data:
+                            st.error("⚠️ Invalid format in sample data. Expected {'contacts': [...]}.")
+                        else:
+                            set_contacts(contacts_data['contacts'])
+                            contact_count = len(contacts_data['contacts'])
+                            st.success(f"✅ {contact_count} sample contacts loaded successfully")
+                            if contact_count > 0:
+                                with st.expander("View Sample Contact"):
+                                    st.json(contacts_data['contacts'][0])
+                    except Exception as e:
+                        st.error(f"⚠️ Error loading sample contacts: {str(e)}")
+            
             if uploaded_file:
                 try:
                     contacts_data = json.load(uploaded_file)
                     if not isinstance(contacts_data, dict) or 'contacts' not in contacts_data:
-                        st.error("⚠️ Invalid format. Expected {'contacts': [...]}")
+                        st.error("⚠️ Invalid format. Expected {'contacts': [...]}.")
                     else:
                         contact_count = len(contacts_data['contacts'])
                         st.success(f"✅ {contact_count} contacts loaded successfully")
