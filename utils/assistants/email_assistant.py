@@ -48,82 +48,69 @@ class EmailAssistant(Assistant):
             }
     
     def render_sidebar(self) -> None:
-        """Render the email assistant sidebar."""
-        # Empty sidebar for now - we've moved contacts to the main area
-        pass
+        """Render the email assistant sidebar with upload and sample data options."""
+        st.sidebar.subheader("Upload contacts to get started")
+        uploaded_file = st.sidebar.file_uploader("Upload Contacts", type=['json'], key="contact_uploader", label_visibility="collapsed")
+        contacts_loaded = 'contacts' in st.session_state and st.session_state.contacts
+
+        if not contacts_loaded:
+            if st.sidebar.button("✨ Use Sample Data", key="use_sample_data_sidebar"):
+                try:
+                    with open("data/contacts.json", "r") as f:
+                        contacts_data = json.load(f)
+                    if not isinstance(contacts_data, dict) or 'contacts' not in contacts_data:
+                        st.sidebar.error("⚠️ Invalid format in sample data. Expected {'contacts': [...]}.")
+                    else:
+                        set_contacts(contacts_data['contacts'])
+                        contact_count = len(contacts_data['contacts'])
+                        st.sidebar.success(f"✅ {contact_count} sample contacts loaded successfully")
+                        if contact_count > 0:
+                            with st.sidebar.expander("View Sample Contact"):
+                                st.json(contacts_data['contacts'][0])
+                except Exception as e:
+                    st.sidebar.error(f"⚠️ Error loading sample contacts: {str(e)}")
+
+        if uploaded_file:
+            try:
+                contacts_data = json.load(uploaded_file)
+                if not isinstance(contacts_data, dict) or 'contacts' not in contacts_data:
+                    st.sidebar.error("⚠️ Invalid format. Expected {'contacts': [...]}.")
+                else:
+                    contact_count = len(contacts_data['contacts'])
+                    st.sidebar.success(f"✅ {contact_count} contacts loaded successfully")
+                    st.session_state.contacts = contacts_data['contacts']
+                    if contact_count > 0:
+                        with st.sidebar.expander("View Sample Contact"):
+                            st.json(contacts_data['contacts'][0])
+            except Exception as e:
+                st.sidebar.error(f"⚠️ Error loading contacts: {str(e)}")
+
+        with st.sidebar.expander("📋 Contact Format Help"):
+            st.markdown("""
+            Your contacts.json file should have this structure:
+            ```json
+            {
+              "contacts": [
+                {
+                  "first_name": "John",
+                  "last_name": "Doe",
+                  "job_title": "Software Engineer",
+                  "company": "Tech Corp",
+                  "industry": "Technology"
+                }
+              ]
+            }
+            ```
+            """)
     
     def render_welcome(self) -> None:
-        """Render the email assistant welcome message and contacts upload."""
+        """Render the email assistant welcome message and instructions in the main area."""
         with st.container():
-            st.write("I'll help you create personalized marketing emails for your contacts using AI-powered content generation.")
-            
             st.subheader("Getting Started:")
             st.markdown("1. **Upload your contacts.json** file below")
             st.markdown("2. **Describe your campaign** or select an example")
             st.markdown("3. **Preview and refine** your personalized email")
-            
             st.write("Your emails will include AI-generated images and personalized content based on your contacts' information.")
-            
-            # Add contacts upload section
-            st.subheader("Upload contacts to get started")
-            
-            # File upload section with instructions
-            uploaded_file = st.file_uploader("Upload Contacts", type=['json'], key="contact_uploader")
-            
-            contacts_loaded = 'contacts' in st.session_state and st.session_state.contacts
-            
-            if not contacts_loaded:
-                if st.button("✨ Use Sample Data", key="use_sample_data"):
-                    try:
-                        with open("data/contacts.json", "r") as f:
-                            contacts_data = json.load(f)
-                        if not isinstance(contacts_data, dict) or 'contacts' not in contacts_data:
-                            st.error("⚠️ Invalid format in sample data. Expected {'contacts': [...]}.")
-                        else:
-                            set_contacts(contacts_data['contacts'])
-                            contact_count = len(contacts_data['contacts'])
-                            st.success(f"✅ {contact_count} sample contacts loaded successfully")
-                            if contact_count > 0:
-                                with st.expander("View Sample Contact"):
-                                    st.json(contacts_data['contacts'][0])
-                    except Exception as e:
-                        st.error(f"⚠️ Error loading sample contacts: {str(e)}")
-            
-            if uploaded_file:
-                try:
-                    contacts_data = json.load(uploaded_file)
-                    if not isinstance(contacts_data, dict) or 'contacts' not in contacts_data:
-                        st.error("⚠️ Invalid format. Expected {'contacts': [...]}.")
-                    else:
-                        contact_count = len(contacts_data['contacts'])
-                        st.success(f"✅ {contact_count} contacts loaded successfully")
-                        st.session_state.contacts = contacts_data['contacts']
-                        
-                        # Show a sample of the first contact
-                        if contact_count > 0:
-                            with st.expander("View Sample Contact"):
-                                st.json(contacts_data['contacts'][0])
-                except Exception as e:
-                    st.error(f"⚠️ Error loading contacts: {str(e)}")
-            
-            # Add help information
-            with st.expander("📋 Contact Format Help"):
-                st.markdown("""
-                Your contacts.json file should have this structure:
-                ```json
-                {
-                  "contacts": [
-                    {
-                      "first_name": "John",
-                      "last_name": "Doe",
-                      "job_title": "Software Engineer",
-                      "company": "Tech Corp",
-                      "industry": "Technology"
-                    }
-                  ]
-                }
-                ```
-                """)
     
     def render_example_prompts(self) -> Optional[str]:
         """Render email assistant example prompts."""
